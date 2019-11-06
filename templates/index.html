@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
+        <title>Blockckain Simple Demo</title>
+    </head>
+    <body>
+        <div class="header">
+            Health Management System using Blockchain
+        </div>
+
+        <div class="content-container">
+            <form class="card" method="GET" action="/mine_block">
+                <input type="text" id="name" name="name" placeholder="Name" />
+                <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    placeholder="Address"
+                />
+                <input
+                    type="text"
+                    id="bg"
+                    name="bg"
+                    placeholder="Blood Group"
+                />
+                <input
+                    type="text"
+                    id="no"
+                    name="no"
+                    placeholder="Contact Number"
+                />
+                <div class="btns">
+                    <button class="btn" type="button" onclick="addData()">
+                        Add Patient
+                    </button>
+                    <button
+                        class="btn btn-alt"
+                        type="button"
+                        onclick="getChain()"
+                    >
+                        See Blockchain
+                    </button>
+                </div>
+            </form>
+
+            <div id="success" class="success">
+                Patient Details Added Successfully
+            </div>
+        </div>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>Some text in the Modal..</p>
+            </div>
+        </div>
+
+        <script>
+            function addData() {
+                var req = new XMLHttpRequest();
+                req.addEventListener('load', function() {
+                    var x = document.getElementById('success');
+                    x.className = x.className + ' show';
+                    setTimeout(function() {
+                        x.className = x.className.replace(' show', '');
+                    }, 3000);
+                });
+                var name = document.getElementById('name').value;
+                var address = document.getElementById('address').value;
+                var bg = document.getElementById('bg').value;
+                var no = document.getElementById('no').value;
+                req.open(
+                    'GET',
+                    `/mine_block?name=${name}&address=${address}&bg=${bg}&no=${no}`
+                );
+                req.send();
+            }
+
+            function getChain() {
+                var req = new XMLHttpRequest();
+                req.addEventListener('load', function() {
+                    var data = this.responseText;
+                    document.querySelector('.modal-content > p').innerHTML = data;
+                    var modal = document.getElementById('modal');
+                    var span = document.getElementsByClassName('close')[0];
+                    modal.style.display = 'block';
+                    span.onclick = function() {
+                        modal.style.display = 'none';
+                    };
+                    window.onclick = function(event) {
+                        if (event.target == modal) {
+                            modal.style.display = 'none';
+                        }
+                    };
+                });
+                req.open('GET', '/get_chain');
+                req.send();
+            }
+        </script>
+    </body>
+</html>
